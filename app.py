@@ -9,7 +9,7 @@ import pymysql
 import urllib.request
 import locale
 import datetime
-import html_table_parser
+from html.parser import HTMLParser
 import requests
 
 app = Flask(__name__)
@@ -44,7 +44,7 @@ def getquery(querytype):
 @app.route("/newrooster/")
 def newrooster():
     xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
-    p = html_table_parser.HTMLTableParser()
+    p = HTMLParser()
     p.feed(xhtml)
     df = pd.DataFrame(p.tables[0])
 
@@ -87,7 +87,7 @@ def rooster(group):
     locale.setlocale(locale.LC_TIME, "nl_NL.UTF-8")
     if group == "new":
         xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
-        p = html_table_parser.HTMLTableParser()
+        p = HTMLParser()
         p.feed(xhtml)
         df = pd.DataFrame(p.tables[0])
 
@@ -279,7 +279,7 @@ def convert_time_range(time_range):
 
 def insertrooster():
     xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
-    p = html_table_parser.HTMLTableParser()
+    p = HTMLParser()
     p.feed(xhtml)
     df = pd.DataFrame(p.tables[0])
 

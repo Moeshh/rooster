@@ -5,9 +5,6 @@ from urllib.parse import parse_qs
 #from html_table_parser import HTMLTableParser
 #from datetime import datetime
 import pymysql
-import mysql.connector
-from mysql.connector import errorcode
-from mysql.connector import ClientFlag
 
 # Obtain connection string information from the portal
 dbconnect = pymysql.connect(user='yc2302',
