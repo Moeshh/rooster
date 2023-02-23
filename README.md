@@ -1,1 +1,3 @@
 # rooster
+
+Rooster in python.
