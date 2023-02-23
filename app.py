@@ -9,7 +9,7 @@ import mysql.connector
 import urllib.request
 import locale
 import datetime
-from html_table_parser import HTMLTableParser
+import html_table_parser
 
 app = Flask(__name__)
 
@@ -43,7 +43,7 @@ def getquery(querytype):
 @app.route("/newrooster/")
 def newrooster():
     xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
-    p = HTMLTableParser()
+    p = html_table_parser.HTMLTableParser()
     p.feed(xhtml)
     df = pd.DataFrame(p.tables[0])
 
@@ -86,7 +86,7 @@ def rooster(group):
     locale.setlocale(locale.LC_TIME, "nl_NL.UTF-8")
     if group == "new":
         xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
-        p = HTMLTableParser()
+        p = html_table_parser.HTMLTableParser()
         p.feed(xhtml)
         df = pd.DataFrame(p.tables[0])
 
@@ -131,8 +131,9 @@ def rooster(group):
             port="3306",
             user="yc2302",
             password="Water123",
-            database="yc2302",
+            database="yc2302"
         )
+        
         query = "SELECT r.*, GROUP_CONCAT(t.name SEPARATOR ', ') AS trainers \
             FROM rooster r \
             LEFT JOIN classes c ON r.id = c.rooster_id \
@@ -280,7 +281,7 @@ def convert_time_range(time_range):
 
 def insertrooster():
     xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
-    p = HTMLTableParser()
+    p = html_table_parser.HTMLTableParser()
     p.feed(xhtml)
     df = pd.DataFrame(p.tables[0])
 
