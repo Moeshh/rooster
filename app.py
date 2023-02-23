@@ -6,6 +6,7 @@ import pokemon
 import sqltest
 import pandas as pd
 import mysql.connector
+from mysql.connector.constants import ClientFlag
 import urllib.request
 import locale
 import datetime
@@ -131,9 +132,9 @@ def rooster(group):
             port="3306",
             user="yc2302",
             password="Water123",
-            database="yc2302"
+            database="yc2302",
+            ssl={'ca': ''}
         )
-        
         query = "SELECT r.*, GROUP_CONCAT(t.name SEPARATOR ', ') AS trainers \
             FROM rooster r \
             LEFT JOIN classes c ON r.id = c.rooster_id \
