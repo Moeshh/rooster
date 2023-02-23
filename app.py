@@ -10,7 +10,6 @@ import urllib.request
 import locale
 import datetime
 from html.parser import HTMLParser
-import requests
 
 app = Flask(__name__)
 
