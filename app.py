@@ -127,14 +127,17 @@ def rooster(group):
         df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y").dt.strftime("%a %d %b")
         df["Tijd"] = df["Tijd"].apply(convert_time_range)
     else:
-        dbconnect = mysql.connector.connect(
-            host="yc2302sql.mysql.database.azure.com",
-            port="3306",
-            user="yc2302",
-            password="Water123",
-            database="yc2302",
-            ssl={'ca': ''}
-        )
+        config = {
+            'user': 'yc2302',
+            'password': 'Water123',
+            'host': 'yc2302sql.mysql.database.azure.com',
+            'database': 'yc2302',
+            'port': '3306',
+            'client_flags': [mysql.connector.ClientFlag.SSL],
+            'ssl_verify_cert': True,
+            'ssl_ca': 'DigiCertGlobalRootCA.crt.pem'
+        }
+        dbconnect = mysql.connector.connect(**config)
         query = "SELECT r.*, GROUP_CONCAT(t.name SEPARATOR ', ') AS trainers \
             FROM rooster r \
             LEFT JOIN classes c ON r.id = c.rooster_id \
