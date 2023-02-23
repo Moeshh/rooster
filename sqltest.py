@@ -1,23 +1,25 @@
-import mysql.connector
 import urllib.request
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 #import pandas as pd
 #from html_table_parser import HTMLTableParser
 #from datetime import datetime
+import pymysql
+import mysql.connector
+from mysql.connector import errorcode
+from mysql.connector import ClientFlag
 
-dbconnect = mysql.connector.connect(
-    host='localhost',
-    port='3306',
-    user='root',
-    password='',
-    database='yc2302'
-)
-
+# Obtain connection string information from the portal
+dbconnect = pymysql.connect(user='yc2302',
+    password='Water123',
+    database='yc2302',
+    host='yc2302sql.mysql.database.azure.com',
+    ssl={'ca': 'DigiCertGlobalRootCA.crt.pem'})
 mycursor = dbconnect.cursor()
 
+
 def selectquery():
-    mycursor.execute('SELECT * FROM students')
+    mycursor.execute('SELECT * FROM rooster')
     mydata = mycursor.fetchall()
     return str(mydata)
 
