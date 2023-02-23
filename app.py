@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return '<p>Hello, World!</p>'
+    return rooster('all')
 
 @app.route('/test/<zoekterm>')
 def test(zoekterm):
