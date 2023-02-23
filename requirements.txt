@@ -2,4 +2,3 @@ Flask
 pandas
 mysql-connector-python
 html_table_parser
-HTMLTableParser
