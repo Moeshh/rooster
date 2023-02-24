@@ -84,7 +84,7 @@ def roosterall():
 @app.route("/rooster/<group>")
 def rooster(group):
     df = pd
-    locale.setlocale(locale.LC_TIME, "nl_NL.UTF-8")
+    #locale.setlocale(locale.LC_TIME, "nl_NL.UTF-8")
     if group == "new":
         xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
         p = HTMLParser()
