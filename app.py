@@ -10,6 +10,9 @@ import urllib.request
 import locale
 import datetime
 from html.parser import HTMLParser
+from bs4 import BeautifulSoup
+import requests
+
 
 app = Flask(__name__)
 
@@ -86,10 +89,14 @@ def rooster(group):
     df = pd
     #locale.setlocale(locale.LC_TIME, "nl_NL.UTF-8")
     if group == "new":
-        xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
-        p = HTMLParser()
-        p.feed(xhtml)
-        df = pd.DataFrame(p.tables[0])
+        response = requests.get('http://example.com')
+        soup = BeautifulSoup(response.content, 'html.parser')
+        df = pd.read_html(str(soup))
+
+        #xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
+        #p = HTMLParser()
+        #p.feed(xhtml)
+        #df = pd.DataFrame(p.tables[0])
 
         # remove indexed headers 0-1-2-3-4 and use top row as headers datum tijd etc.
         new_header = df.iloc[0]
