@@ -4,3 +4,4 @@ pandas==1.5.3
 beautifulsoup4==4.4.1
 pymysql==1.0.2
 requests==2.28.2
+lxml==4.9.2
