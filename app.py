@@ -10,6 +10,8 @@ import urllib.request
 import locale
 import datetime
 from html.parser import HTMLParser
+import collections
+collections.Callable = collections.abc.Callable
 from bs4 import BeautifulSoup
 import requests
 
