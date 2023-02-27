@@ -89,10 +89,9 @@ def rooster(group):
     df = pd
     #locale.setlocale(locale.LC_TIME, "nl_NL.UTF-8")
     if group == "new":
-        response = requests.get('http://example.com')
+        response = requests.get('http://p.codefounders.nl/p')
         soup = BeautifulSoup(response.content, 'html.parser')
         df = pd.read_html(str(soup))
-
         #xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
         #p = HTMLParser()
         #p.feed(xhtml)

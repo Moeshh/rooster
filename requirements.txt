@@ -2,5 +2,5 @@ Flask==2.2.3
 html_table_parser==0.1.0
 pandas==1.5.3
 beautifulsoup4==4.4.1
-pymysql
+pymysql==1.0.2
 requests==2.28.2
