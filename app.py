@@ -101,9 +101,9 @@ def rooster(group):
 
         # remove indexed headers 0-1-2-3-4 and use top row as headers datum tijd etc.
         print(df)
-        new_header = df.iloc[0]
-        df = df[1:]
-        df.columns = new_header
+        #new_header = df.iloc[0]
+        #df = df[1:]
+        #df.columns = new_header
         # merge dag and datum into 1 row
         df["Datum"] = df.apply(merge_columns, axis=1)
 
