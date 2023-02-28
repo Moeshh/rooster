@@ -93,20 +93,26 @@ def rooster(group):
     if group == "new":
         response = requests.get('http://p.codefounders.nl/p')
         soup = BeautifulSoup(response.content, 'html.parser')
-        df = pd.read_html(str(soup))
-        #xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
-        #p = HTMLParser()
-        #p.feed(xhtml)
-        #df = pd.DataFrame(p.tables[0])
+        table = soup.find_all("table")[0]
 
-        # remove indexed headers 0-1-2-3-4 and use top row as headers datum tijd etc.
-        print(df)
-        #new_header = df.iloc[0]
-        #df = df[1:]
-        #df.columns = new_header
-        # merge dag and datum into 1 row
-        df["Datum"] = df.apply(merge_columns, axis=1)
+        # Extract the header and data rows from the table
+        header = [th.text.strip() for th in table.find_all("th")]
+        data_rows = table.find_all("tr")[1:]
 
+        # Extract the data from each row
+        data = []
+        for row in data_rows:
+            cells = row.find_all("td")
+            row_data = [cell.text.strip() for cell in cells]
+            data.append(row_data)
+
+        # Create a dataframe with the header and data
+        df = pd.DataFrame(data, columns=header)
+
+        # Merge the "Dag" and "Datum" columns into a single "Datum" column
+        df["Datum"] = df["Dag"] + " " + df["Datum"]
+        df.drop(columns=["Dag"], inplace=True)
+        
         # rearrange columns
         df = df.rename(
             columns={
