@@ -7,7 +7,6 @@ import sqltest
 import pandas as pd
 import pymysql
 import urllib.request
-import locale
 import datetime
 from html.parser import HTMLParser
 import collections
@@ -21,7 +20,7 @@ app = Flask(__name__)
 @app.route('/')
 def hello_world():
     #return '<p>Hello, World!</p>'
-    return rooster('all')
+    return rooster('new')
 
 @app.route('/test/<zoekterm>')
 def test(zoekterm):
@@ -45,42 +44,6 @@ def getquery(querytype):
             return insertrooster()
         case 'inserttrainers':
             return inserttrainers()
-
-@app.route("/newrooster/")
-def newrooster():
-    xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
-    p = HTMLParser()
-    p.feed(xhtml)
-    df = pd.DataFrame(p.tables[0])
-
-    # remove indexed headers 0-1-2-3-4 and use top row as headers datum tijd etc.
-    new_header = df.iloc[0]
-    df = df[1:]
-    df.columns = new_header
-    # merge dag and datum into 1 row
-    df["Datum"] = df.apply(merge_columns, axis=1)
-    # rearrange columns
-    columns_titles = [
-        "Datum",
-        "Tijd",
-        "Training",
-        "Les info",
-        "Trainer(s)",
-        "Locatie",
-        "Status",
-    ]
-    df = df.reindex(columns=columns_titles)
-    # only show rows relevant to class yc2302
-    df.drop(df[df["Training"] == "Weekend"].index, inplace=True)
-    df.drop(df[df["Training"] == ""].index, inplace=True)
-    # dchange time format
-    df["Datum"] = df["Datum"].apply(lambda x: date_replace(x, str(datetime.date.today().year)))
-    df["Tijd"] = df["Tijd"].apply(convert_time_range)
-
-    html_string = "<html><head><title>Rooster</title><style>body { background-color: linen; } table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #d8d8d8; padding: 8px; text-align: left; } th { background-color: #d8d8d8; }tr:nth-child(even) { background-color: #f8f8f8;}tr:nth-child(odd) { background-color: #f0f0f0;}</style></head><body>"
-
-    return html_string + df.to_html(index=False)
-
 
 @app.route('/rooster/')
 def roosterall():
@@ -234,7 +197,7 @@ def rooster(group):
     html_table = df_styled.to_html(index=False)
     js = "<script>function val(){let selectedClass=document.getElementById(\"SelectClass\").value;let selectedTrainer=document.getElementById(\"SelectTrainer\").value;let i=0;let tableRows=document.querySelectorAll('table tr');tableRows.forEach(function(row,index){if(index===0){row.style.display='';return} let rowClass=row.querySelector('td:nth-child(4)');let rowTrainers=row.querySelector('td:nth-child(7)');if((selectedClass!=='all'&&selectedTrainer!=='all'&&rowClass&&rowTrainers&&rowClass.textContent===selectedClass&&rowTrainers.textContent.includes(selectedTrainer))||(selectedClass!=='all'&&selectedTrainer==='all'&&rowClass&&rowClass.textContent===selectedClass)||(selectedClass==='all'&&selectedTrainer!=='all'&&rowTrainers&&rowTrainers.textContent.includes(selectedTrainer))||(selectedClass==='all'&&selectedTrainer==='all')){row.style.display='';if(i%2==0){row.style.background=\"#f0f0f0\"}else{row.style.background=\"#f8f8f8\"} i++}else{row.style.display='none'}})}</script>"    
     html_head = (
-        "<html><head><title>Rooster</title>"
+        "<html><head><title>Rooster</title><link href=\"/favicon.ico\" rel=\"icon\" type=\"image/x-icon\"/>"
         + js
         + "<style>body { background-color: linen; } table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #d8d8d8; padding: 8px; text-align: left; } th { background-color: #d8d8d8; }tr:nth-child(even) { background-color: #f0f0f0;}tr:nth-child(odd) { background-color: #f8f8f8;}.today {background-color: yellow;} #ClassSelect { position:relative; float:left; padding: 5px; } #TrainerSelect { position:relative; float:left; padding: 5px; }</style></head><body>"
     )
@@ -280,11 +243,6 @@ def url_get_contents(url):
     f = urllib.request.urlopen(req)
     return f.read()
 
-
-def merge_columns(row):
-    return str(row["Dag"]) + " " + row["Datum"]
-
-
 def convert_time_range(time_range):
     start, end = time_range.split("-")
     start = start.zfill(2)
@@ -293,17 +251,27 @@ def convert_time_range(time_range):
 
 
 def insertrooster():
-    xhtml = url_get_contents("http://p.codefounders.nl/p").decode("utf-8")
-    p = HTMLParser()
-    p.feed(xhtml)
-    df = pd.DataFrame(p.tables[0])
+    response = requests.get('http://p.codefounders.nl/p')
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find_all("table")[0]
 
-    # remove indexed headers 0-1-2-3-4 and use top row as headers datum tijd etc.
-    new_header = df.iloc[0]
-    df = df[1:]
-    df.columns = new_header
-    # merge dag and datum into 1 row
-    df["Datum"] = df.apply(merge_columns, axis=1)
+    # Extract the header and data rows from the table
+    header = [th.text.strip() for th in table.find_all("th")]
+    data_rows = table.find_all("tr")[1:]
+
+    # Extract the data from each row
+    data = []
+    for row in data_rows:
+        cells = row.find_all("td")
+        row_data = [cell.text.strip() for cell in cells]
+        data.append(row_data)
+
+    # Create a dataframe with the header and data
+    df = pd.DataFrame(data, columns=header)
+
+    # Merge the "Dag" and "Datum" columns into a single "Datum" column
+    df["Datum"] = df["Dag"] + " " + df["Datum"]
+    df.drop(columns=["Dag"], inplace=True)
     # rearrange columns
     columns_titles = [
         "Datum",
