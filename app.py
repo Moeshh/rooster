@@ -76,22 +76,21 @@ def rooster(group):
         df["Datum"] = df["Dag"] + " " + df["Datum"]
         df.drop(columns=["Dag"], inplace=True)
         df.drop(columns=["Status"], inplace=True)
+        df.drop(columns=["Les notities"], inplace=True)
         # rearrange columns
         df = df.rename(
             columns={
                 "Les info": "Training",
                 "Training": "Groep",
-                "Les notities": "Info",
             }
         )
         columns_titles = [
             "Datum",
             "Tijd",
+            "Locatie",
             "Groep",
             "Training",
-            "Info",
             "Trainer(s)",
-            "Locatie",
         ]
         df = df.reindex(columns=columns_titles)
 
@@ -124,6 +123,7 @@ def rooster(group):
         # sort by datetime
         df = df.sort_values(by=["starttime"])
         df.drop(columns=["source"], inplace=True)
+        df.drop(columns=["info"], inplace=True)
         # rename headers and sort the headers
         df = df.rename(
             columns={
@@ -133,17 +133,15 @@ def rooster(group):
                 "training": "Training",
                 "trainers": "Trainer(s)",
                 "location": "Locatie",
-                "info": "Info",
             }
         )
         columns_titles = [
             "Datum",
             "Tijd",
+            "Locatie",
             "Groep",
             "Training",
-            "Locatie",
-            "Trainer(s)",
-            "Info",
+            "Trainer(s)"
         ]
         df = df.reindex(columns=columns_titles)
 
@@ -192,7 +190,7 @@ def rooster(group):
         .set_table_attributes('class="roostertable"')
     )
     html_table = df_styled.to_html(index=False)
-    js = "<script>document.addEventListener(\"DOMContentLoaded\", function() { const selectElement = document.getElementById(\"SelectClass\"); const yc2302Option = selectElement.querySelector(\"option[value='YC2302']\"); yc2302Option.selected = true; val(); }); function val(){let selectedClass=document.getElementById(\"SelectClass\").value;let selectedTrainer=document.getElementById(\"SelectTrainer\").value;let i=0;let tableRows=document.querySelectorAll('table tr');tableRows.forEach(function(row,index){if(index===0){row.style.display='';return} let rowClass=row.querySelector('td:nth-child(4)');let rowTrainers=row.querySelector('td:nth-child(7)');if((selectedClass!=='all'&&selectedTrainer!=='all'&&rowClass&&rowTrainers&&rowClass.textContent===selectedClass&&rowTrainers.textContent.includes(selectedTrainer))||(selectedClass!=='all'&&selectedTrainer==='all'&&rowClass&&rowClass.textContent===selectedClass)||(selectedClass==='all'&&selectedTrainer!=='all'&&rowTrainers&&rowTrainers.textContent.includes(selectedTrainer))||(selectedClass==='all'&&selectedTrainer==='all')){row.style.display='';if(i%2==0){row.style.background=\"#f0f0f0\"}else{row.style.background=\"#f8f8f8\"} i++}else{row.style.display='none'}})}</script>"    
+    js = "<script>document.addEventListener(\"DOMContentLoaded\", function() { const selectElement = document.getElementById(\"SelectClass\"); const yc2302Option = selectElement.querySelector(\"option[value='YC2302']\"); yc2302Option.selected = true; val(); }); function val(){let selectedClass=document.getElementById(\"SelectClass\").value;let selectedTrainer=document.getElementById(\"SelectTrainer\").value;let i=0;let tableRows=document.querySelectorAll('table tr');tableRows.forEach(function(row,index){if(index===0){row.style.display='';return} let rowClass=row.querySelector('td:nth-child(5)');let rowTrainers=row.querySelector('td:nth-child(7)');if((selectedClass!=='all'&&selectedTrainer!=='all'&&rowClass&&rowTrainers&&rowClass.textContent===selectedClass&&rowTrainers.textContent.includes(selectedTrainer))||(selectedClass!=='all'&&selectedTrainer==='all'&&rowClass&&rowClass.textContent===selectedClass)||(selectedClass==='all'&&selectedTrainer!=='all'&&rowTrainers&&rowTrainers.textContent.includes(selectedTrainer))||(selectedClass==='all'&&selectedTrainer==='all')){row.style.display='';if(i%2==0){row.style.background=\"#f0f0f0\"}else{row.style.background=\"#f8f8f8\"} i++}else{row.style.display='none'}})}</script>"    
     #favicon = "<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"{{ url_for('static', filename='apple-touch-icon.png') }}\"><link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"{{ url_for('static', filename='favicon-32x32.png') }}\"><link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"{{ url_for('static', filename='favicon-16x16.png') }}\"><link rel=\"manifest\" href=\"{{ url_for('static', filename='site.webmanifest') }}\"><link rel=\"mask-icon\" href=\"{{ url_for('static', filename='safari-pinned-tab.svg') }}\" color=\"#d55b5b\"><link rel=\"shortcut icon\" href=\"{{ url_for('static', filename='favicon.ico') }}\"><meta name=\"apple-mobile-web-app-title\" content=\"Rooster\"><meta name=\"application-name\" content=\"Rooster\"><meta name=\"msapplication-TileColor\" content=\"#2b5797\"><meta name=\"theme-color\" content=\"#ffffff\">"
     html_head = (
         "<html><head><link rel=\"shortcut icon\" href=\"favicon.ico\"><title>Rooster</title>"
