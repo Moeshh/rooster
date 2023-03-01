@@ -203,7 +203,7 @@ def rooster(group):
         + "<style>body { background-color: linen; } table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #d8d8d8; padding: 8px; text-align: left; } th { background-color: #d8d8d8; }tr:nth-child(even) { background-color: #f0f0f0;}tr:nth-child(odd) { background-color: #f8f8f8;}.today {background-color: yellow;} #ClassSelect { position:relative; float:left; padding: 5px; } #TrainerSelect { position:relative; float:left; padding: 5px; }</style></head><body>"
     )
     html_end = "</body></html>"
-    return render_template(html_head + class_select + trainer_select + html_table + html_end)
+    return html_head + class_select + trainer_select + html_table + html_end
 
 
 
