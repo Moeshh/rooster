@@ -141,9 +141,9 @@ def rooster(group):
             "Tijd",
             "Groep",
             "Training",
-            "Info",
-            "Trainer(s)",
             "Locatie",
+            "Trainer(s)",
+            "Info",
         ]
         df = df.reindex(columns=columns_titles)
 
