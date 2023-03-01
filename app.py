@@ -75,13 +75,12 @@ def rooster(group):
         # Merge the "Dag" and "Datum" columns into a single "Datum" column
         df["Datum"] = df["Dag"] + " " + df["Datum"]
         df.drop(columns=["Dag"], inplace=True)
-        
+        df.drop(columns=["Status"], inplace=True)
         # rearrange columns
         df = df.rename(
             columns={
                 "Les info": "Training",
                 "Training": "Groep",
-                "Status": "Source",
                 "Les notities": "Info",
             }
         )
@@ -93,7 +92,6 @@ def rooster(group):
             "Info",
             "Trainer(s)",
             "Locatie",
-            "Source",
         ]
         df = df.reindex(columns=columns_titles)
 
@@ -125,6 +123,7 @@ def rooster(group):
         )
         # sort by datetime
         df = df.sort_values(by=["starttime"])
+        df.drop(columns=["source"], inplace=True)
         # rename headers and sort the headers
         df = df.rename(
             columns={
@@ -135,7 +134,6 @@ def rooster(group):
                 "trainers": "Trainer(s)",
                 "location": "Locatie",
                 "info": "Info",
-                "source": "Source",
             }
         )
         columns_titles = [
@@ -146,7 +144,6 @@ def rooster(group):
             "Info",
             "Trainer(s)",
             "Locatie",
-            "Source",
         ]
         df = df.reindex(columns=columns_titles)
 
